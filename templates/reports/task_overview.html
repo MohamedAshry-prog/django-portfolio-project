@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Task Overview Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="mb-3">Task Overview</h2>
+        </div>
+    </div>
+
+    <!-- Task Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card-group">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Tasks</h5>
+                        <p class="card-text">{{ task|length }}</p>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

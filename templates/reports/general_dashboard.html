@@ -1,0 +1,173 @@
+
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Overall Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h2 class="mb-3">Organization Overview</h2>
+            <div class="card-group">
+                <div class="card text-white bg-primary mb-3 mx-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Departments</h5>
+                        <p class="card-text display-4">{{ overall_stats.total_departments }}</p>
+                    </div>
+                </div>
+                <div class="card text-white bg-success mb-3 mx-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Employees</h5>
+                        <p class="card-text display-4">{{ overall_stats.total_users }}</p>
+                    </div>
+                </div>
+                <div class="card text-white bg-info mb-3 mx-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Tasks</h5>
+                        <p class="card-text display-4">{{ overall_stats.total_tasks }}</p>
+                    </div>
+                </div>
+                <div class="card text-white bg-warning mb-3 mx-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Completion Rate</h5>
+                        <p class="card-text display-4">{{ overall_stats.completion_rate }}%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Department Statistics -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Department Performance</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Department</th>
+                                    <th>Employees</th>
+                                    <th>Total Tasks</th>
+                                    <th>Completed</th>
+                                    <th>In Progress</th>
+                                    <th>Pending</th>
+                                    <th>Completion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for dept in departments %}
+                                <tr>
+                                    <td>{{ dept.name }}</td>
+                                    <td>{{ dept.total_users }}</td>
+                                    <td>{{ dept.total_tasks }}</td>
+                                    <td class="text-success">{{ dept.completed_tasks }}</td>
+                                    <td class="text-info">{{ dept.in_progress_tasks }}</td>
+                                    <td class="text-warning">{{ dept.pending_tasks }}</td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            {% widthratio dept.completed_tasks dept.total_tasks 100 as completion %}
+                                            <div class="progress-bar bg-success" role="progressbar" 
+                                                style="width: {{ completion }}%" 
+                                                aria-valuenow="{{ completion }}" 
+                                                aria-valuemin="0" 
+                                                aria-valuemax="100">
+                                                {{ completion }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No department data available</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section (optional) -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Task Status Distribution</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="taskStatusChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Department Comparison</h3>
+                </div>
+                <div class="card-body">
+                    <canvas id="departmentChart" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Task Status Chart
+    const taskCtx = document.getElementById('taskStatusChart').getContext('2d');
+    new Chart(taskCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Completed', 'In Progress', 'Pending'],
+            datasets: [{
+                data: [
+                    {{ total.completed_tasks }},
+                    {{ total.in_progress_tasks }},
+                    {{ total.pending_tasks }},
+                ],
+                backgroundColor: [
+                    '#28a745',
+                    '#17a2b8',
+                    '#ffc107'
+                ]
+            }]
+        }
+    });
+
+    // Department Comparison Chart
+    const deptCtx = document.getElementById('departmentChart').getContext('2d');
+    new Chart(deptCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for dept in departments %}'{{ dept.name }}',{% endfor %}],
+            datasets: [
+                {
+                    label: 'Completed Tasks',
+                    data: [{% for dept in departments %}{{ dept.completed_tasks }},{% endfor %}],
+                    backgroundColor: '#28a745'
+                },
+                {
+                    label: 'Total Tasks',
+                    data: [{% for dept in departments %}{{ dept.total_tasks }},{% endfor %}],
+                    backgroundColor: '#6c757d'
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

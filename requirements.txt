@@ -1,0 +1,4 @@
+django
+psycopg[binary]
+django-environ
+python-dotenv 

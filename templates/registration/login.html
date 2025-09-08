@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SignIn</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}" />
+    <script
+      src="https://kit.fontawesome.com/64d58efce2.js"
+      crossorigin="anonymous"
+    ></script>
+  
+  </head>
+  <body>
+    <div class="container">
+        <div class="forms-container">
+            <div class="signin-signup">
+            <form action="" method='POST' class="sign-in-form">
+              {% csrf_token %}
+                <h2 class="title">Sign In</h2>
+                <div class="input-field">
+                <i class="fas fa-user"></i>
+                <input type="text" name='username' placeholder="Username" />
+                </div>
+                <div class="input-field">
+                <i class="fas fa-lock"></i>
+                <input type="password" name='password' placeholder="Password" />
+                </div>
+                <button type="submit" value="Login" class="btn solid" >submit</button>
+            </form>
+
+
+            </div>
+    </div>
+
+    </body>
+</html>

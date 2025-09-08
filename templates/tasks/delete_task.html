@@ -1,0 +1,13 @@
+{% include 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h1>حذف المهمة</h1>
+    <p>هل أنت متأكد أنك تريد حذف المهمة "{{ task.title }}"؟</p>
+
+    <form method="post" action="{% url 'tasks:delete-tasks' task.task_pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">حذف</button>
+        <a href="{% url 'tasks:task-list' %}" class="btn btn-secondary">إلغاء</a>
+    </form>
+
+{% endblock %}
